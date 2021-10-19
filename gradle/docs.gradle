@@ -138,6 +138,8 @@ task docsZip(type: Zip, dependsOn: ['api', 'asciidoctor', 'dokka']) {
 	}
 }
 
+
+//报错请修改下面两个注释掉的地方！！！！！
 task schemaZip(type: Zip) {
 	group = "Distribution"
 	baseName = "spring-framework"
@@ -149,16 +151,16 @@ task schemaZip(type: Zip) {
 		def Properties schemas = new Properties();
 
 		subproject.sourceSets.main.resources.find {
-//			it.path.endsWith("META-INF\\spring.schemas")
-			it.path.endsWith("META-INF/spring.schemas")
+			it.path.endsWith("META-INF\\spring.schemas")
+			// it.path.endsWith("META-INF/spring.schemas")
 		}?.withInputStream { schemas.load(it) }
 
 		for (def key : schemas.keySet()) {
 			def shortName = key.replaceAll(/http.*schema.(.*).spring-.*/, '$1')
 			assert shortName != key
 			File xsdFile = subproject.sourceSets.main.resources.find {
-//				it.path.endsWith(schemas.get(key).replaceAll('\\/','\\\\'))
-				it.path.endsWith(schemas.get(key))
+				it.path.endsWith(schemas.get(key).replaceAll('\\/','\\\\'))
+				// it.path.endsWith(schemas.get(key))
 			}
 			assert xsdFile != null
 			into (shortName) {

@@ -7,6 +7,7 @@ import java.util.List;
 /**
  * Created by wangbin33 on 2020/2/17.
  */
+@SuppressWarnings("unchecked")
 public class MemberDaoTest {
 	public static void main(String[] args) throws Exception {
 		ComboPooledDataSource dataSource = new ComboPooledDataSource();

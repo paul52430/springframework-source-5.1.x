@@ -22,13 +22,14 @@ public class LogAspects {
 
 
 	@Around("pointCut()")
+	@SuppressWarnings("unchecked")
 	public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
 		// 获取被增强的目标对象，然后获取目标对象的class
 		Class<?> targetClass = pjp.getTarget().getClass();
 		// 方法名称
 		String methodName = pjp.getSignature().getName();
 		// 目标方法的参数类型
-		Class[] parameterTypes = ((MethodSignature) pjp.getSignature()).getParameterTypes();
+		Class<?>[] parameterTypes = ((MethodSignature) pjp.getSignature()).getParameterTypes();
 		// 目标方法的入参
 		Object[] args = pjp.getArgs();
 		System.out.println("执行Around，方法入参为：" + Arrays.toString(args));

@@ -1,7 +1,8 @@
 package com.wb.spring.event;
 
 import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
+
+import java.io.Serializable;
 
 /**
  * Description:
@@ -9,7 +10,8 @@ import org.springframework.context.ApplicationListener;
  * @author wangbin33
  * @date 2020/5/5 20:56
  */
-public class TestEvent extends ApplicationEvent {
+public class TestEvent extends ApplicationEvent implements Serializable {
+	private static final long serialVersionUID = 7582196682485937896L;
 	private String text;
 	public TestEvent(Object source, String text) {
 		super(source);

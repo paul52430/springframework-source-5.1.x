@@ -82,6 +82,7 @@ configure(allprojects) { project ->
 	}
 
 	configurations.all {
+		resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
 		// Check for updates every build
 		resolutionStrategy.cacheChangingModulesFor 0, "seconds"
 

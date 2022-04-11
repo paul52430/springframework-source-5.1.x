@@ -10,6 +10,8 @@ import java.io.IOException;
  * Created by wangbin33 on 2020/2/17.
  */
 public class MyDispatcherServlet extends HttpServlet {
+	private static final long serialVersionUID = -4845113815100015168L;
+
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doDispatch(req,resp);

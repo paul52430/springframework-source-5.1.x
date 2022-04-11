@@ -14,7 +14,9 @@ public class TestMain {
 		AnnotationConfigApplicationContext acx = new AnnotationConfigApplicationContext();
 		acx.register(ExtConfig.class);
 		acx.refresh();
-		acx.publishEvent(new ApplicationEvent(new String("我发布的测试事件...")) {});
+		acx.publishEvent(new ApplicationEvent(new String("我发布的测试事件...")) {
+			private static final long serialVersionUID = -4131482155312050108L;
+		});
 		// 发布一个自定义事件.
 		// 容器关闭
 		acx.close();

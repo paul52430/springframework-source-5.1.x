@@ -16,7 +16,7 @@ public class UserService {
 	@Resource
 	private UserDao userDao;
 
-	@Transactional(propagation = Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public void m1() {
 //		User user = new User();
 //		user.setAge(12);
@@ -26,24 +26,24 @@ public class UserService {
 		this.m2();
 //		int i = 1 / 0;
 	}
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
 	public void m2() {
 		User user = new User();
 		user.setAge(13);
 		user.setId(91);
 		user.setName("m2");
 		userDao.insert(user);
-		int i = 1 / 0;
+		int i = 1 / 2;
 		System.out.println("m2 has been invoked.");
 	}
 
 //	@Transactional
-	@Transactional(noRollbackFor = Exception.class)
+	@Transactional(noRollbackFor = Exception.class, rollbackFor = Exception.class)
 	public void insert(User user) {
 		userDao.insert(user);
 //		int[] arr = new int[1];
 //		arr[3] = 10;
-		int a = 1 / 0;
+		int a = 1 / 2;
 		System.out.println("插入完成...");
 	}
 }

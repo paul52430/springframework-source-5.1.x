@@ -3,14 +3,16 @@ package com.wb.spring.designpattern.singleton;
 import java.lang.reflect.Constructor;
 
 /**
- * Created by wangbin33 on 2019/12/31.
+ *
+ * @author wangbin33
+ * @date 2019/12/31
  */
 public class LazyInnerClassSingletonTest {
 	public static void main(String[] args) {
 		try {
 			Class<?> clazz = LazyInnerClassSingleton.class;
 
-			Constructor c = clazz.getDeclaredConstructor(null);
+			Constructor<?> c = clazz.getDeclaredConstructor((Class<?>[]) null);
 			c.setAccessible(true);
 
 			Object o1 = c.newInstance();

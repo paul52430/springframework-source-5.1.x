@@ -15,6 +15,7 @@ import java.util.List;
 public class MyDispatchServlet extends HttpServlet {
 
 
+	private static final long serialVersionUID = 6666163628571940387L;
 	private List<Handler> handlerMapping = new ArrayList<>();
 
 	@Override
@@ -23,9 +24,9 @@ public class MyDispatchServlet extends HttpServlet {
 			Class<?> memberControllerClass = MemberController.class;
 			handlerMapping.add(new Handler()
 					.setController(memberControllerClass.newInstance())
-					.setMethod(memberControllerClass.getMethod("getMemberById", new Class[]{String.class}))
+					.setMethod(memberControllerClass.getMethod("getMemberById", String.class))
 					.setUrl("/web/getMemberById.json"));
-		} catch (Exception e) {}
+		} catch (Exception ignored) {}
 	}
 
 	public void doDispatch(HttpServletRequest request, HttpServletResponse response) {

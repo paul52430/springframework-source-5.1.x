@@ -12,7 +12,7 @@ public class TestMain {
 
 	private ApplicationContext acx = null;
 
-	private Class configClass = LookUpConfig.class;
+	private final Class<LookUpConfig> configClass = LookUpConfig.class;
 
 	@Before
 	public void init() {

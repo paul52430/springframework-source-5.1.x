@@ -1,6 +1,9 @@
 package com.wb.spring.designpattern.singleton;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
 
 /**
@@ -30,8 +33,8 @@ public class EnumSingletonTest {
 	 */
 	public static void testReflectEnumSingleton2() {
 		try {
-			Class clazz = EnumSingleton.class;
-			Constructor c = clazz.getDeclaredConstructor(String.class, int.class);
+			Class<EnumSingleton> clazz = EnumSingleton.class;
+			Constructor<?> c = clazz.getDeclaredConstructor(String.class, int.class);
 			c.setAccessible(true);
 			EnumSingleton instance = (EnumSingleton) c.newInstance("王兵", 21);
 		} catch (Exception e) {
@@ -50,8 +53,8 @@ public class EnumSingletonTest {
 	 */
 	public static void testReflectEnumSingleton1() {
 		try {
-			Class clazz = EnumSingleton.class;
-			Constructor c = clazz.getDeclaredConstructor();
+			Class<EnumSingleton> clazz = EnumSingleton.class;
+			Constructor<?> c = clazz.getDeclaredConstructor();
 			c.newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();

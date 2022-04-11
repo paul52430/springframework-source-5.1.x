@@ -11,6 +11,8 @@ import java.io.Serializable;
 public class SeriableSingleton implements Serializable {
 
 	public static final SeriableSingleton INSTANCE = new SeriableSingleton();
+	private static final long serialVersionUID = 2113934560783565667L;
+
 	private SeriableSingleton() {}
 
 	public static SeriableSingleton getInstance() {

@@ -11,7 +11,7 @@ public class LazyInnerClassSingleton {
 		}
 	}
 
-	public static final LazyInnerClassSingleton getInstance() {
+	public static LazyInnerClassSingleton getInstance() {
 		return LazyHolder.LAZY;
 	}
 

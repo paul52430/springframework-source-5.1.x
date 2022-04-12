@@ -10,12 +10,15 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
- * Created by wangbin33 on 2020/3/8.
+ *
+ * @author wangbin33
+ * @date 2020/3/8
  */
 @Configuration
 @ComponentScan({"com.wb.spring.autowired"})
 @EnableWebMvc
 public class AutowiredConfig {
+
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 	public ShopCar shopCar() {

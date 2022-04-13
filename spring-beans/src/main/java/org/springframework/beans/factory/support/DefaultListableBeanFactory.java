@@ -1093,6 +1093,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	}
 
 	/**
+	 * 删除所有按类型映射的 map
 	 * Remove any assumptions about by-type mappings.
 	 */
 	private void clearByTypeCache() {

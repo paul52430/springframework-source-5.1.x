@@ -16,9 +16,6 @@
 
 package org.springframework.beans.factory.config;
 
-import java.beans.PropertyEditor;
-import java.security.AccessControlContext;
-
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.PropertyEditorRegistry;
 import org.springframework.beans.TypeConverter;
@@ -30,7 +27,14 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringValueResolver;
 
+import java.beans.PropertyEditor;
+import java.security.AccessControlContext;
+
 /**
+ * 由大多数bean工厂实现的配置接口。除了BeanFactory接口中的bean工厂客户端方法外，还提供配置bean工厂的工具。
+ * 这个bean工厂接口并不打算用于普通的应用程序代码:对于典型的需求，请坚持使用
+ * BeanFactory或org.springframework.beans.factory.ListableBeanFactory。
+ * 这个扩展的接口只是为了允许框架内部即插即用，以及对bean工厂配置方法的特殊访问。
  * Configuration interface to be implemented by most bean factories. Provides
  * facilities to configure a bean factory, in addition to the bean factory
  * client methods in the {@link org.springframework.beans.factory.BeanFactory}
@@ -51,6 +55,7 @@ import org.springframework.util.StringValueResolver;
 public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, SingletonBeanRegistry {
 
 	/**
+	 * 标准单例作用域的作用域标识符:"singleton"。自定义作用域可以通过registerScope添加。
 	 * Scope identifier for the standard singleton scope: "singleton".
 	 * Custom scopes can be added via {@code registerScope}.
 	 * @see #registerScope
@@ -58,6 +63,8 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
 	String SCOPE_SINGLETON = "singleton";
 
 	/**
+	 * 如果类被@Scope(BeanDefination.SCOPE_PROTOTYPE)修饰时,那么每次依赖注入时,都会产生新的对象
+	 * 标准原型范围的范围标识符:“prototype”。自定义作用域可以通过registerScope添加。
 	 * Scope identifier for the standard prototype scope: "prototype".
 	 * Custom scopes can be added via {@code registerScope}.
 	 * @see #registerScope

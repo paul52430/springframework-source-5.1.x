@@ -3,10 +3,9 @@ package com.wb.spring.xml;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.PropertySource;
 
 /**
- * Description:
+ * Description:通过重写initPropertySources()方法，给属性赋值
  *
  * @author wangbin33
  * @date 2020/8/6 14:42

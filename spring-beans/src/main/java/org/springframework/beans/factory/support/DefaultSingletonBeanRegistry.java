@@ -149,6 +149,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	}
 
 	/**
+	 * 添加给定的单例池来构建指定的单例。 为单例的快速注册调用，例如能够解析循环引用。
 	 * Add the given singleton factory for building the specified singleton
 	 * if necessary.
 	 * <p>To be called for eager registration of singletons, e.g. to be able to
@@ -188,24 +189,25 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @param allowEarlyReference whether early references should be created or not
 	 * @return the registered singleton object, or {@code null} if none found
 	 */
+
 	////////////////////////////////////////////////////////////////////////////
 	//   ******该段代码是 Spring 解决循环引用的核心代码******
 	//
-	//   解决循环引用逻辑：使用构造函数创建一个 “不完整” 的 bean 实例（之所以说不完整，是因为此时该 bean 实例还未初始化），
-	//      并且提前曝光该 bean 实例的 ObjectFactory（提前曝光就是将 ObjectFactory 放到 singletonFactories 缓存），
-	//      通过 ObjectFactory 我们可以拿到该 bean 实例的引用，如果出现循环引用，我们可以通过缓存中的 ObjectFactory 来拿到 bean 实例，
+	//   解决循环引用逻辑：使用构造函数创建一个 “不完整”的bean实例（之所以说不完整，是因为此时该bean实例还未初始化），
+	//      并且提前曝光该bean实例的 ObjectFactory（提前曝光就是将 ObjectFactory 放到 singletonFactories缓存），
+	//      通过 ObjectFactory我们可以拿到该bean实例的引用，如果出现循环引用，我们可以通过缓存中的ObjectFactory来拿到bean实例，
 	//      从而避免出现循环引用导致的死循环。
 	//
-	//    这边通过缓存中的 ObjectFactory 拿到的 bean 实例虽然拿到的是 “不完整” 的 bean 实例，但是由于是单例，所以后续初始化完成后，
-	//      该 bean 实例的引用地址并不会变，所以最终我们看到的还是完整 bean 实例。
+	//    这边通过缓存中的ObjectFactory拿到的 bean实例虽然拿到的是 “不完整”的bean实例，但是由于是单例，所以后续初始化完成后，
+	//      该bean实例的引用地址并不会变，所以最终我们看到的还是完整bean实例。
 
 
 	//	另外这个代码块中引进了4个重要缓存：
-	//		singletonObjects 缓存：beanName -> 单例 bean 对象。
-	//		earlySingletonObjects 缓存：beanName -> 单例 bean 对象，该缓存存放的是早期单例 bean 对象，可以理解成还未进行属性填充、初始化。
-	//		singletonFactories 缓存：beanName -> ObjectFactory。
-	//		singletonsCurrentlyInCreation 缓存：当前正在创建单例 bean 对象的 beanName 集合。
-	//		singletonObjects、earlySingletonObjects、singletonFactories 在这边构成了一个类似于 “三级缓存” 的概念。
+	//		singletonObjects 缓存：beanName ->单例 bean对象。
+	//		earlySingletonObjects 缓存：beanName ->单例 bean对象，该缓存存放的是早期单例 bean对象，可以理解成还未进行属性填充、初始化。
+	//		singletonFactories缓存：beanName ->ObjectFactory。
+	//		singletonsCurrentlyInCreation缓存：当前正在创建单例bean对象的beanName集合。
+	//		singletonObjects、earlySingletonObjects、singletonFactories在这边构成了一个类似于 “三级缓存”的概念。
 	////////////////////////////////////////////////////////////////////////////
 	/**
 	 * 注意：
@@ -567,6 +569,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	}
 
 	/**
+	 * 返回依赖于指定bean的所有bean的名称(如果有的话)。
 	 * Return the names of all beans which depend on the specified bean, if any.
 	 * @param beanName the name of the bean
 	 * @return the array of dependent bean names, or an empty array if none

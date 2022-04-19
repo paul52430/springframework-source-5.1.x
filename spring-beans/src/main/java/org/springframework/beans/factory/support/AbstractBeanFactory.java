@@ -199,6 +199,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 *
 	 *
 	 * doGetBean(name, null, null, false);
+	 * 返回指定bean的实例，该实例可以是共享的，也可以是独立的。
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T> T doGetBean(final String name, @Nullable final Class<T> requiredType,
@@ -503,10 +504,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 	@Override
 	public boolean isTypeMatch(String name, ResolvableType typeToMatch) throws NoSuchBeanDefinitionException {
-		// 解析bean的名称
+		// 解析bean的名称,如：传入的 beanName是&beanName, 则将&去掉；如果传入的 beanName 有别名，则替换为别名；
 		String beanName = transformedBeanName(name);
 
 		// Check manually registered singletons.
+		//根据beanName获取bean单例，前提是已经被实例化了，或者在实例化中
 		Object beanInstance = getSingleton(beanName, false);
 		if (beanInstance != null && beanInstance.getClass() != NullBean.class) {
 			if (beanInstance instanceof FactoryBean) {
@@ -525,6 +527,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				}
 				else if (typeToMatch.hasGenerics() && containsBeanDefinition(beanName)) {
 					// Generics potentially only match on the target class, not on the proxy...
+					// 泛型可能只在目标类上匹配，而不在代理上匹配。
 					RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
 					Class<?> targetType = mbd.getTargetType();
 					if (targetType != null && targetType != ClassUtils.getUserClass(beanInstance)) {
@@ -586,6 +589,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		}
 
 		// Check bean class whether we're dealing with a FactoryBean.
+		//是否是factoryBean
 		if (FactoryBean.class.isAssignableFrom(beanType)) {
 			if (!BeanFactoryUtils.isFactoryDereference(name) && beanInstance == null) {
 				// If it's a FactoryBean, we want to look at what it creates, not the factory class.
@@ -1037,10 +1041,10 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		}
 		// 父BeanFactory的解释：
 		/**
-		 *  在 Spring 中可能存在多个 BeanFactory，多个 BeanFactory 可能存在 “父工厂” 与 “子工厂” 的关系。
-		 *    最常见的例子就是：Spring MVC 的 BeanFactory 和 Spring 的 BeanFactory，通常情况下，Spring 的 BeanFactory 是 “父工厂”，
-		 *    Spring MVC 的 BeanFactory 是 “子工厂”，在 Spring 中，子工厂可以使用父工厂的 BeanDefinition。
-		 *    因而，如果在当前 BeanFactory 中找不到，而又存在父工厂，则会去父工厂中查找。
+		 *  在 Spring中可能存在多个BeanFactory，多个BeanFactory可能存在 “父工厂”与 “子工厂”的关系。
+		 *    最常见的例子就是：Spring MVC的BeanFactory和Spring的 BeanFactory，通常情况下，Spring的BeanFactory是 “父工厂”，
+		 *    Spring MVC的BeanFactory是 “子工厂”，在Spring中，子工厂可以使用父工厂的BeanDefinition。
+		 *    因而，如果在当前BeanFactory中找不到，而又存在父工厂，则会去父工厂中查找。
 		 */
 
 		// Resolve merged bean definition locally.
@@ -1293,6 +1297,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	/**
+	 * 返回给定bean的RootBeanDefinition，如果给定bean的定义是子bean的定义，则通过合并父bean的定义返回
 	 * Return a RootBeanDefinition for the given bean, by merging with the
 	 * parent if the given bean's definition is a child bean definition.
 	 * @param beanName the name of the bean definition
@@ -1312,6 +1317,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			RootBeanDefinition mbd = null;
 
 			// Check with full lock now in order to enforce the same merged instance.
+			//现在使用full lock进行检查，以便执行相同的合并实例。
 			if (containingBd == null) {
 				// 检查beanName对应的MergedBeanDefinition是否存在于缓存中.
 				mbd = this.mergedBeanDefinitions.get(beanName);
@@ -1343,9 +1349,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 							// 则获取父定义的MergedBeanDefinition（也就是bd的爷爷定义...）
 
 							/**
-							 * 一般情况下，Spring 通过反射机制利用 bean 的  class 属性指定实现类来实例化 bean。
-							 *   而 FactoryBean 是一种特殊的 bean，它是个工厂 bean，可以自己创建 bean 实例，如果一个类实现了 FactoryBean 接口，
-							 *   则该类可以自己定义创建实例对象的方法，只需要实现它的 getObject() 方法。
+							 * 一般情况下，Spring通过反射机制利用bean的 class属性指定实现类来实例化bean。
+							 *   而 FactoryBean是一种特殊的bean，它是个工厂bean，可以自己创建bean实例，如果一个类实现了FactoryBean接口，
+							 *   则该类可以自己定义创建实例对象的方法，只需要实现它的getObject() 方法。
 							 *
 							 * 很多中间件都利用 FactoryBean 来进行扩展。例如：
 							 *
@@ -1366,9 +1372,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 									}
 								}
 							 注意：
-							 为了区分 “FactoryBean” 和 “FactoryBean 创建的 bean 实例”，Spring 使用了 “&” 前缀。假设我们的 beanName 为 apple，
-							   则 getBean("apple") 获得的是 AppleFactoryBean 通过 getObject() 方法创建的 bean 实例；
-							   而 getBean("&apple") 获得的是 AppleFactoryBean 本身。
+							 为了区分 “FactoryBean”和 “FactoryBean创建的bean 实例”，Spring使用了“&”前缀。假设我们的beanName为apple，
+							   则getBean("apple")获得的是AppleFactoryBean通过getObject() 方法创建的bean实例；
+							   而 getBean("&apple")获得的是AppleFactoryBean本身。
 							 *
 							 */
 							pbd = getMergedBeanDefinition(parentBeanName);
@@ -1514,7 +1520,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 		if (!ObjectUtils.isEmpty(typesToMatch)) {
 			// When just doing type checks (i.e. not creating an actual instance yet),
+			// 当只做类型检查时(即还没有创建实际的实例)
 			// use the specified temporary class loader (e.g. in a weaving scenario).
+			// 使用指定的临时类Loader(例如在构造场景中)。
 			ClassLoader tempClassLoader = getTempClassLoader();
 			if (tempClassLoader != null) {
 				dynamicLoader = tempClassLoader;
@@ -1533,6 +1541,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			Object evaluated = evaluateBeanDefinitionString(className, mbd);
 			if (!className.equals(evaluated)) {
 				// A dynamically resolved expression, supported as of 4.2...
+				// 动态解析表达式
 				if (evaluated instanceof Class) {
 					return (Class<?>) evaluated;
 				}
@@ -1566,6 +1575,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	/**
+	 * 按照bean定义中包含的方式计算给定的String，可能将其解析为表达式。
 	 * Evaluate the given String as contained in a bean definition,
 	 * potentially resolving it as an expression.
 	 * @param value the value to check

@@ -392,6 +392,10 @@ class ConstructorResolver {
 	}
 
 	/**
+	 * 使用指定工厂方法实例化bean。
+	 * 如果bean定义参数指定了一个类，而不是“工厂bean”，或者使用依赖注入(Dependency Injection)配置的工厂对象本身的实例变量，则该方法可以是静态的。
+	 * 实现要求使用RootBeanDefinition中指定的名称迭代静态方法或实例方法(该方法可能是重载的)，并尝试与参数匹配。
+	 * 我们没有把类型附加到构造函数的参数上，所以试错法是唯一的方法。explicitArgs数组可以包含通过相应的getBean方法以编程方式传递的参数值
 	 * Instantiate the bean using a named factory method. The method may be static, if the
 	 * bean definition parameter specifies a class, rather than a "factory-bean", or
 	 * an instance variable on a factory object itself configured using Dependency Injection.
@@ -673,6 +677,7 @@ class ConstructorResolver {
 	}
 
 	/**
+	 * 将此bean的构造函数参数解析到resolvedValues对象中。这可能涉及查找其他bean
 	 * Resolve the constructor arguments for this bean into the resolvedValues object.
 	 * This may involve looking up other beans.
 	 * <p>This method is also used for handling invocations of static factory methods.

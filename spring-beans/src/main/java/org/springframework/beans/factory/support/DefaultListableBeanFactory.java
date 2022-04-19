@@ -472,25 +472,35 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			if (!isAlias(beanName)) {
 				try {
 					// 获取合并之后的Bean定义。过程中会进行bean定义的合并操作.
+					// 暂时理解为根据BeanName 获取 BeanDefinition
 					RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
 					// Only check bean definition if it is complete.
 					// 条件：
-					// 		bean不是抽象的 && (允许紧急初始化 || (存在bean对应的class || 非延迟初始化 || 允许工厂类紧急加载bean对应的class) && )
+					// 		bean不是抽象的 && (允许提前初始化 || (存在bean对应的class || 非延迟初始化 || 允许工厂类提前加载bean对应的class) &&
+					// 		检查特殊的bean 不需要提前被初始化)
 					if (!mbd.isAbstract() && (allowEagerInit ||
 							(mbd.hasBeanClass() || !mbd.isLazyInit() || isAllowEagerClassLoading()) &&
 									!requiresEagerInitForType(mbd.getFactoryBeanName()))) {
 						// In case of FactoryBean, match object created by FactoryBean.
 						boolean isFactoryBean = isFactoryBean(beanName, mbd);
+						//用来保存Bean的定义。包括Bean的定义，名称及别名
 						BeanDefinitionHolder dbd = mbd.getDecoratedDefinition();
+						// 这个地方是判断是不是找到匹配的beanName 这里关键的是isTypeMatch这个方法
+						// 在这个方法中会导致一些FactoryBean被提前实例化 所以这里给我们的一个提示是：
+						// 在Spring容器的启动阶段，调用isTypeMatch这个方法去判断Bean的类型的时候要慎重一些。
+						// 我们要重点分析isTypeMatch这个方法
 						boolean matchFound =
 								(allowEagerInit || !isFactoryBean ||
 										(dbd != null && !mbd.isLazyInit()) || containsSingleton(beanName)) &&
 								(includeNonSingletons ||
 										(dbd != null ? mbd.isSingleton() : isSingleton(beanName))) &&
 								isTypeMatch(beanName, type);
+						//如果类型不匹配，并且还是 FactoryBean类型的BeanDefinition
 						if (!matchFound && isFactoryBean) {
 							// In case of FactoryBean, try to match FactoryBean instance itself next.
+							//这里将 beanName 转为 &beanName
 							beanName = FACTORY_BEAN_PREFIX + beanName;
+							//继续判断类型是否匹配
 							matchFound = (includeNonSingletons || mbd.isSingleton()) && isTypeMatch(beanName, type);
 						}
 						if (matchFound) {
@@ -522,13 +532,16 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		}
 
 		// Check manually registered singletons too.
+		// 检查手动注册的单例 bean
 		for (String beanName : this.manualSingletonNames) {
 			try {
 				// In case of FactoryBean, match object created by FactoryBean.
+				//对于FactoryBean，匹配由FactoryBean创建的对象
 				if (isFactoryBean(beanName)) {
 					if ((includeNonSingletons || isSingleton(beanName)) && isTypeMatch(beanName, type)) {
 						result.add(beanName);
 						// Match found for this bean: do not match FactoryBean itself anymore.
+						//为这个bean找到匹配:不再匹配FactoryBean本身
 						continue;
 					}
 					// In case of FactoryBean, try to match FactoryBean itself next.

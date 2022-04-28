@@ -32,12 +32,14 @@ package org.springframework.context.annotation;
 public enum FilterType {
 
 	/**
+	 * 筛选用给定注释标记的候选项。
 	 * Filter candidates marked with a given annotation.
 	 * @see org.springframework.core.type.filter.AnnotationTypeFilter
 	 */
 	ANNOTATION,
 
 	/**
+	 * 筛选可分配给给定类型的候选项。
 	 * Filter candidates assignable to a given type.
 	 * @see org.springframework.core.type.filter.AssignableTypeFilter
 	 */

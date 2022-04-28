@@ -4,9 +4,7 @@ import java.util.ArrayList;
 
 public class TestMain4 {
 
-
 	public static void main(String[] args) {
-
 		/**
 		 * 上界通配符，通配符?只能是 T 和 T 的子类
 		 * add(): 不可以加入任何元素，除了null

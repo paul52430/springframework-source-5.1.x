@@ -49,6 +49,15 @@ import java.util.function.Supplier;
  * @see GenericBeanDefinition
  * @see RootBeanDefinition
  * @see ChildBeanDefinition
+ *
+ * Bean的描述信息（例如是否是抽象类、是否单例）
+ * depends-on属性（String类型，不是Class类型）
+ * 自动装配的相关信息
+ * init函数、destroy函数的名字（String类型）
+ * 工厂方法名、工厂类名（String类型，不是Class类型）
+ * 构造函数形参的值
+ * 被IOC容器覆盖的方法
+ * Bean的属性以及对应的值（在初始化后会进行填充）
  */
 @SuppressWarnings("serial")
 public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccessor
@@ -57,7 +66,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	/**
 	 * Constant for the default scope name: {@code ""}, equivalent to singleton
 	 * status unless overridden from a parent bean definition (if applicable).
-	 * Bean默认的scope
+	 * Bean默认的scope，默认是单例
 	 */
 	public static final String SCOPE_DEFAULT = "";
 
@@ -95,6 +104,9 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 * @see #setAutowireMode
 	 * @deprecated as of Spring 3.0: If you are using mixed autowiring strategies,
 	 * use annotation-based autowiring for clearer demarcation of autowiring needs.
+	 * 通过Bean的class推断适当的自动装配策略（autowired=autodetect）
+	 * 如果Bean定义有有参构造函数，则通过自动装配构造函数形参，完成对应属性的自动装配（AUTOWIRE_CONSTRUCTOR）
+	 * 否则，使用setter函数（AUTOWIRE_BY_TYPE）
 	 */
 	@Deprecated
 	public static final int AUTOWIRE_AUTODETECT = AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT;
@@ -142,7 +154,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	private volatile Object beanClass;
 
 	/**
-	 * bean对应的作用域
+	 * bean对应的作用域，默认的scope是单例
 	 * prototype
 	 * singleton
 	 * request
@@ -173,7 +185,8 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	/**
 	 * 用来控制Bean的初始化顺序。
-	 * 比如Bean A依赖Bean B，而Bean B中需要初始化一些缓存，初始化缓存的时候又使用了单例模式，没有注入到Spring容器中。而A中需要使用该缓存，这个时候需要指定B应该先被初始化。
+	 * 比如Bean A依赖Bean B，而Bean B中需要初始化一些缓存，初始化缓存的时候又使用了单例模式，没有注入到Spring容器中。
+	 * 而A中需要使用该缓存，这个时候需要指定B应该先被初始化。
 	 * 可以再Bean A中声明该属性，表示依赖的Bean，这样Spring在初始化A的时候，会先去初始化B。防止因为B未初始化而导致使用出现未知问题
 	 */
 	@Nullable
@@ -183,7 +196,8 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 * 该变量表示Spring在依赖注入时，默认注入所有声明的Bean
 	 *
 	 * 有一种情况，需要设置某些Bean不参与注入：
-	 *    当某一个接口有多个实现类时，这些实现类中如果有某些bean不想参与自动注入，可以通过在bean的定义中声明该属性的值为false，表示不参与自动注入.
+	 * 当某一个接口有多个实现类时，这些实现类中如果有某些bean不想参与自动注入，
+	 * 可以通过在bean的定义中声明该属性的值为false，表示不参与自动注入.
 	 */
 	private boolean autowireCandidate = true;
 
@@ -220,12 +234,13 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	/**
 	 * 工厂Bean的名称，工厂Bean即用来创建Bean的工厂对应的Bean
+	 * （注意是String类型，不是Class类型）
 	 */
 	@Nullable
 	private String factoryBeanName;
 
 	/**
-	 * 工厂方法的名称
+	 * 工厂方法的名称（注意是String类型，不是Method类型）
 	 */
 	@Nullable
 	private String factoryMethodName;
@@ -244,6 +259,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	/**
 	 * 记录哪些方法被覆写了
+	 * 存储被IOC容器覆盖的方法的相关信息（例如replace-method属性指定的函数）
 	 */
 	private MethodOverrides methodOverrides = new MethodOverrides();
 

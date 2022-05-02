@@ -25,6 +25,8 @@ import org.springframework.lang.Nullable;
  * {@link org.springframework.core.convert.ConversionService ConversionService}
  * used when converting property values from one type to another.
  *
+ * 注解配置的属性转换
+ *
  * @author Chris Beams
  * @since 3.1
  */

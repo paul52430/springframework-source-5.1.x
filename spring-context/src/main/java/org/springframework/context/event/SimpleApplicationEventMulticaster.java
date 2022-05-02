@@ -44,6 +44,8 @@ import java.util.concurrent.Executor;
  * @author Juergen Hoeller
  * @author Stephane Nicoll
  * @see #setTaskExecutor
+ *
+ * 事件发布的核心！
  */
 public class SimpleApplicationEventMulticaster extends AbstractApplicationEventMulticaster {
 

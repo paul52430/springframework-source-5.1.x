@@ -58,7 +58,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * interface. Doesn't mandate the type of storage used for configuration; simply
  * implements common context functionality. Uses the Template Method design pattern,
  * requiring concrete subclasses to implement abstract methods.
- *
+ * mandate：授权  concrete:混合
  * <p>In contrast to a plain BeanFactory, an ApplicationContext is supposed
  * to detect special beans defined in its internal bean factory:
  * Therefore, this class automatically registers
@@ -180,6 +180,7 @@ public abstract class AbstractApplicationContext
 	/**
 	 * 用于Spring容器启动刷新和销毁。
 	 * 在执行refresh()，doClose()和close()方法时使用的同步锁对象
+	 * 用来上锁。防止重复刷新
 	 */
 	private final Object startupShutdownMonitor = new Object();
 	/** Reference to the JVM shutdown hook, if registered. */
